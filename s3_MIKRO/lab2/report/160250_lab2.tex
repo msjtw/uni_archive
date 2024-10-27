@@ -23,7 +23,7 @@
        \large Sprawozdanie Laboratorium Mikroelektronika \\
        \huge  Podstawowe symulacje wybranych układów CMOS – tranzystor nMOS}
 
-\author{Stanisław Fiedler 160250}
+\author{Stanisław Fiedler 160250 L1}
 \date{LAB 2, 22 października 2024}
 
 \begin{document}
@@ -51,6 +51,10 @@
 	działania tranzystora nMOS.}\label{sub:12} % (fold)
 Wzory opisujące działanie tranzystora nMOS:
 \begin{enumerate}
+	\item w zakresie odcięcia:
+	      \[
+		      I_D = 0
+	      \]
 	\item w zakresie linowym: \[
 		      I_D = \mu C_{OX} \frac{W}{L} \left[ \left( V_{GS} - V_{T} \right) - \frac{V^2_{DS}}{2} \right] 	      \]
 	\item w zakresie nasycenia: \[
@@ -59,9 +63,11 @@ Wzory opisujące działanie tranzystora nMOS:
 \end{enumerate}
 % subsection  (end)
 
+Kiedy $ V_{DS} < V_{GS}-V_{T} $ tranzystor znajduje się w obszarze liniowym, prąd drenu zależy wtedy od napięcia $ V_{DS} $.
+W zakresie tym napięcie dren-źródło nie ma większego wpływu na kanał przewodzący.
 
-
-
+W zakresie nasycenia $ \left( V_{DS} > V_{GS}-V_{T} \right) $ z powodu działania pola elektrycznego między źródłem, a drenem, kanał przewodzący zwęża się co powoduje że $ I_D $ przestaje być zależne od napięcia dren-źródło.
+Aby zwiększyć prąd drenu w zakresie nasycenia należy poszerzyć kanał zwiększając napięcie bramki.
 
 % section Zadanie 1 (end)
 
@@ -76,6 +82,8 @@ Pozwala on na przeprowadzenie symulacji zgodnej z rzeczywistym zachowaniem tranz
 \begin{verbatim}
 	 .model N_50n nmos level = 54 oraz .MODEL P_1u PMOS LEVEL = 3
 \end{verbatim}
+
+Ostatnia liczba oznacza poziom złożoności i dokładności z jaką jest opisany tranzystor.
 
 % section Zadanie 3 (end)
 
