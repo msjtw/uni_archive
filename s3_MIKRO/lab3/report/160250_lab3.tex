@@ -100,7 +100,7 @@ delay, low-to-high propagation delay, propagation delay, contamination delay.
 
 % section Parametry 1 inwerter (end)
 
-\section{Parametry 4 połączonych szeregowo inwerterów}\label{sec: parametry_szeregowo} % (fold)
+\section{Parametry czterech połączonych szeregowo inwerterów}\label{sec: parametry_szeregowo} % (fold)
 
 Opierając się na przykładzie z rysunku 2 zaprojektować układ złożony z połączonych szeregowo 4 bramek
 logicznych not (inwerterów). Ostatni inwerter obciążyć pojemnościowo. Dla zaprojektowanego układu dokonać symulacji
@@ -111,7 +111,7 @@ każdej kolejnej bramki not.
 	\includegraphics[scale=0.35]{mikro_lab3/symulacja4.PNG}
 \end{center}
 
-\subsection{Pierwszy inwerter}
+\subsection{Drugi inwerter}
 \begin{description}
 	\item[Rise time:] $37 ps$ \hfill
 	      \begin{center}
@@ -137,7 +137,7 @@ każdej kolejnej bramki not.
 % subsection inv1 (end)
 
 \pagebreak
-\subsection{Drugi inwerter}
+\subsection{Trzeci inwerter}
 \begin{description}
 	\item[Rise time:] $29 ps$ \hfill
 	      \begin{center}
@@ -163,7 +163,7 @@ każdej kolejnej bramki not.
 % subsection inv2 (end)
 
 \pagebreak
-\subsection{Trzeci inwerter}
+\subsection{Czwarty inwerter}
 \begin{description}
 	\item[Rise time:] $217 ps$ \hfill
 	      \begin{center}
@@ -222,6 +222,46 @@ Przedstaw wynik symulacyjny, obrazujący obszar, w którym następuje największ
 \section{Inverter Switching Point}\label{sec:nverter_switching_point} % (fold)
 Wyznacz ‘Inverter Switching Point’ – napięcie VSP, w którym napięcie wejściowe jest równe napięciu
 wyjściowemu. Przedstaw odpowiednie wzory oraz obliczenia.
+
+Natężenie płynące przez tranzystor nMOS:
+\[
+	I_{Dn} = \frac{k_n \left( V_{SP}-V_{t} \right)^2 }{2}
+\]
+
+Natężenie płynące przez tranzystor pMOS:
+\[
+	I_{Dp} = \frac{k_p \left( V_{DD}-V_{SP}-|V_{t}| \right)^2 }{2}
+\]
+
+Wartości stałych:
+
+\begin{center}
+	\begin{tabular}{c | c | c }
+		         & nMOS              & pMOS             \\
+		\hline
+		$V_{TO}$ & 0.8V              & -0.9V            \\
+		k        & $120\cdot10^{-6}$ & $40\cdot10^{-6}$ \\
+	\end{tabular}
+\end{center}
+
+\pagebreak
+Obliczenia:
+\[
+	I_{Dn} = I_{Dp}
+\]
+\[
+	\frac{k_n \left( V_{SP}-V_{t} \right) }{2} = \frac{k_p \left( V_{DD}-V_{SP}-|V_{t}| \right) }{2}
+\]
+\[
+	120\cdot10^{-6}\left(V_{GS}-0,8V\right)^2 = 40\cdot10^{-6}\left(5V-V_{SP}-0,9V\right)^2
+\]
+\[
+	\sqrt{3}V_{SP}-1,38V = -V_{SP} + 4,1V
+\]
+\[
+	V_{SP} = 2V
+\]
+
 
 % section nverter Switching Point (end)
 

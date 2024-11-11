@@ -24,3 +24,4 @@ numerical_analysis/interval_2.h
 *.url
 *.svn
 *.toc
+*.ods#
