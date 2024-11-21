@@ -88,20 +88,13 @@ Wraz ze wzrostem amplitudy drgań roście średnia odległość między atomami 
 
 \subsection{Wykres}\label{sub:wykres} % (fold)
 \begin{center}
-	\begin{tikzpicture}
-		\node (img) {
-			\includegraphics[scale=0.5]{images/wykres.png}
-		};
-		\draw[->, thick] (-8,-5.7) -- (8.5,-5.7) node[anchor=south east] {temperatura [$^{\circ} C$]};
-		\draw[->, thick] (-7.8,-6) -- (-7.8,6.4) node[anchor=north west] {wydłużenie [mm]};
-	\end{tikzpicture}
+	\includegraphics[scale=0.3]{images/wykres2.png}
+
+	\includegraphics[scale=0.7]{images/wyniki.png}
 \end{center}
-Kolory:
-\begin{itemize}
-	\item Czerwony - mosiądz
-	\item Czarny - miedź
-	\item Niebieski - stal
-\end{itemize}
+
+Regresja liniowa oraz jej błąd zostały wyznaczone w python z użyciem biblioteki scipy.
+
 % subsection Wykres (end)
 
 \subsection{Obliczenia}\label{sub:obliczenia} % (fold)
@@ -115,37 +108,153 @@ $a = \alpha_{sr}l_0$ . Więc współczynnik rozszerzalności wyznaczymy ze wzoru
 	\alpha = \frac{a}{l_0}
 \end{equation}
 
+Błąd zostanie obliczony z użyciem  metody różniczki logarytmicznej na podstawie
+niepewności współczynnika nachylenia regresji liniowej oraz niepewności pomiaru długości.
+
+\[
+	\alpha = a^1 \cdot l_0^{-1}
+\]
+\[
+	\Delta \alpha = \left( \frac{\Delta a}{a} + \frac{\Delta l_0}{l_0} \right) \alpha
+\]
+
+\subsubsection{Długości początkowe i niepewności}
+
+\begin{multicols}{2}
+
+	Początkowa długość prętów:
+	\begin{itemize}
+		\item Miedź 772,6 - 1,3 = 771,3mm
+		\item Mosiądz 771,5 - 0,4 = 771,1 mm
+		\item Stal 772,5 - 0,9 = 771,6 mm
+	\end{itemize}
+
+	\columnbreak
+
+	Niepewności pomiarowe:
+	\begin{itemize}
+		\item $ \Delta T = 0,5^{\circ}C$
+		\item $ \Delta l = 0,5mm $
+		\item $ \Delta(\Delta l) = 0,02mm  $
+	\end{itemize}
+
+\end{multicols}
 % subsection Obliczenia (end)
 
 \subsubsection{Miedź}\label{sub:miedz} % (fold)
 Równanie prostej:
 \[
-	y = 0,0129592x - 0,296283
+	a = 0,0129592 \pm 0,0005936
 \]
-
-
+\begin{multicols}{2}
+	\[
+		\alpha_{miedz} = \frac{a}{l_0}
+	\]
+	\[
+		\alpha_{miedz} = \frac{0,0129592}{771,3} \quad \frac{1}{K}
+	\]
+	\[
+		\alpha_{miedz} = 1.6801 \cdot 10^{-5} \quad \frac{1}{K}
+	\]
+	\columnbreak
+	\[
+		\Delta \alpha = \left( \frac{\Delta a}{a} + \frac{\Delta l_0}{l_0} \right) \alpha
+	\]
+	\[
+		\Delta \alpha = \left( \frac{0,0005936}{0,0129592} + \frac{0,05}{771,3} \right) 1.6801763 \quad \frac{1}{K}
+	\]
+	\[
+		\Delta \alpha = 0,077 \quad \frac{1}{K}
+	\]
+\end{multicols}
 % subsection Miedz (end)
 
 \subsubsection{Mosiądz}\label{sub:mosiadz} % (fold)
 Równanie prostej:
 \[
-	y = 0,0142768x - 0,325362
+	a = 0,014277 \pm 0.000716
 \]
+\begin{multicols}{2}
+	\[
+		\alpha_{mosiadz} = \frac{a}{l_0}
+	\]
+	\[
+		\alpha_{mosiadz} = \frac{0,014277}{771,1} \quad \frac{1}{K}
+	\]
+	\[
+		\alpha_{mosiadz} = 1.85151 \cdot 10^{-5} \quad \frac{1}{K}
+	\]
+	\columnbreak
+	\[
+		\Delta \alpha = \left( \frac{\Delta a}{a} + \frac{\Delta l_0}{l_0} \right) \alpha
+	\]
+	\[
+		\Delta \alpha = \left( \frac{0.000716}{0,014277} + \frac{0,05}{771,1} \right) 1.85151 \quad \frac{1}{K}
+	\]
+	\[
+		\Delta \alpha = 0.093 \quad \frac{1}{K}
+	\]
+\end{multicols}
 % subsection Mosiadz (end)
 
 \subsubsection{Stal}\label{sub:stal} % (fold)
 Równanie prostej:
 \[
-	y = 0,00937915x - 0,223155
+	a = 0,009379 \pm  0.000525
 \]
+\begin{multicols}{2}
+	\[
+		\alpha_{stal} = \frac{a}{l_0}
+	\]
+	\[
+		\alpha_{stal} = \frac{0,009379}{771,6} \quad \frac{1}{K}
+	\]
+	\[
+		\alpha_{stal} = 1.2155 \cdot 10^{-5} \quad \frac{1}{K}
+	\]
+	\columnbreak
+	\[
+		\Delta \alpha = \left( \frac{\Delta a}{a} + \frac{\Delta l_0}{l_0} \right) \alpha
+	\]
+	\[
+		\Delta \alpha = \left( \frac{0.000525}{0,009379} + \frac{0,05}{771,6} \right) 1.2155 \quad \frac{1}{K}
+	\]
+	\[
+		\Delta \alpha = 0.0681 \quad \frac{1}{K}
+	\]
+\end{multicols}
 % subsection Stal (end)
 
+\pagebreak
 \subsection{Wyniki}\label{sub:wyniki} % (fold)
+
+\begin{center}
+	\Large
+	Miedź
+	\[
+		\alpha = 1,68 \pm 0,07 \quad \frac{1}{K}
+	\]
+	Mosiądz
+	\[
+		\alpha = 1,85 \pm 0,09 \quad \frac{1}{K}
+	\]
+	Stal
+	\[
+		\alpha = 1,22 \pm 0,07\quad \frac{1}{K}
+	\]
+\end{center}
 
 % subsection Wyniki (end)
 
 \subsection{Wnioski}\label{sub:wnioski} % (fold)
-
+Wartości tablicowe współczynników rozszerzalności linowej, podane za \href{https://openstax.org/books/fizyka-dla-szk%C3%B3%C5%82-wy%C5%BCszych-tom-2/pages/1-3-rozszerzalnosc-cieplna}{openstax.org}
+, wynoszą dla:
+\begin{description}
+	\item[Miedź] $ 1,7 \cdot 10^{-5} \frac{1}{K}$
+	\item[Mosiądz] $ 1,9 \cdot 10^{-5} \frac{1}{K}$
+	\item[Stal] $ 1,2 \cdot 10^{-5} \frac{1}{K}$
+\end{description}
+Jak widać wyznaczone wartości zgadzają się z wartościami tablicowymi, a powstałe różnice mogą wynikać z różnic między proporcjami składników w stopach stali i mosiądzu.
 % subsection Wnioski (end)
 
 \end{document}
