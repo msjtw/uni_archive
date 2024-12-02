@@ -20,7 +20,7 @@
 
 
 \title{%
-	\vspace{-2cm}
+	\vspace{-1.5cm}
        \large Sprawozdanie Laboratorium Mikroelektronika \\
        \huge  Podstawowe symulacje wybranych układów CMOS}
 
@@ -37,7 +37,7 @@ Dla symulacji układu z rysunku 1 wyznaczyć parametry rise time, fall time, edg
 high-to-low propagation delay, low-to-high propagation delay, propagation delay, contamination delay.
 \subsection{Wyniki symulacji}\label{sub:wyniki_symulacji} % (fold)
 \begin{center}
-	\includegraphics[scale=0.24]{images/nand.png}
+	\includegraphics[scale=0.27]{images/nand.png}
 \end{center}
 % subsection Wyniki symulacji (end)
 \subsection{Tablica prawdy}\label{sub:tablica_prawdy} % (fold)
@@ -54,25 +54,25 @@ high-to-low propagation delay, low-to-high propagation delay, propagation delay,
 % subsection Tablica prawdy (end)
 \subsection{Wyznaczone parametry}\label{sub:wyznaczone_parametry} % (fold)
 \begin{description}
-	\item[Rise time:] $232ps$ \hfill
+	\item[Rise time:] $175ps$ \hfill
 	      \begin{center}
-		      \includegraphics[scale=0.20]{images/rise_time.png}
+		      \includegraphics[scale=0.29]{images/rise_time.png}
 	      \end{center}
-	\item[Fall time:] $355ps$ \hfill
+	\item[Fall time:] $1,35 \, ns$ \hfill
 	      \begin{center}
-		      \includegraphics[scale=0.20]{images/fall_time.png}
+		      \includegraphics[scale=0.29]{images/fall_time.png}
 	      \end{center}
-	\item[Edge rate:] $\frac{355ps + 232ps}{2} = 294ps$
-	\item[High-to-low propagation delay:] $174ps$ \hfill
+	\item[Edge rate:] $\frac{175ps + 1350ps}{2} = 763ps$
+	\item[High-to-low propagation delay:] $547ps$ \hfill
 	      \begin{center}
-		      \includegraphics[scale=0.25]{images/high_to_low.png}
+		      \includegraphics[scale=0.3]{images/high_to_low.png}
 	      \end{center}
-	\item[Low-to-high propagation delay:] $108ps$ \hfill
+	\item[Low-to-high propagation delay:] $143ps$ \hfill
 	      \begin{center}
-		      \includegraphics[scale=0.25]{images/low_to_high.png}
+		      \includegraphics[scale=0.3]{images/low_to_high.png}
 	      \end{center}
-	\item[Propagation delay:] $\frac{174ps + 108ps}{2} = 141ps $
-	\item[Contamination delay:] $ min\{108ps, 174ps\} = 108ps $
+	\item[Propagation delay:] $\frac{547ps + 143ps}{2} = 345ps $
+	\item[Contamination delay:] $ min\{143ps, 547ps\} = 143ps $
 \end{description}
 % subsection Wyznaczone parametry (end)
 % section NAND (end)

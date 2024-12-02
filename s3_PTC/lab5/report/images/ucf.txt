@@ -1,0 +1,8 @@
+NET "X[0]" LOC="A10";
+NET "X[1]" LOC="D14";
+NET "X[2]" LOC="C14";
+NET "X[3]" LOC="P15";
+NET "Y[3]" LOC="L14";
+NET "Y[2]" LOC="N14";
+NET "Y[1]" LOC="M14";
+NET "Y[0]" LOC="U18";
