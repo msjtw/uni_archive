@@ -11,7 +11,7 @@ data = [
     (1, (1, 2), 4, 3, 2, 5, 1),
     (2, (1, 4), 9, 7, 5, 6, 0),
     (3, (2, 3), 9, 6, 4, 5, 3),
-    (4, (2, 5), 8, 6, 3, 6, 0),
+    (4, (2, 5), 8, 6, 3, 6, 1),
     (5, (3, 5), 7, 6, 5, 7, 0),
     (6, (3, 6), 10, 8, 6, 10, 2),
     (7, (4, 6), 6, 4, 2, 4, 0),
@@ -179,12 +179,12 @@ dv = pd.DataFrame.from_records(
 )
 
 for index, row in d.iterrows():
-    print(row['czynność'])
+    print(row['czynność'], row['tn']-row['skrocenie'])
 
 for index, row in d.iterrows():
     a = row["czynność"][0]
     b = row["czynność"][1]
     calkowity = dv.loc[b]["koniec"] - dv.loc[a]["start"] - row["tn"] + row["skrocenie"];
     swobodny = dv.loc[b]["start"] - dv.loc[a]["start"] - row["tn"] + row["skrocenie"];
-    krytyczny = max(0, dv.loc[b]["start"] - dv.loc[a]["koniec"] - row["tn"] + row["skrocenie"])
-    print(row['czynność'], ", całkowity: ", calkowity, ", swobodny: ", swobodny, ", krytyczny:", krytyczny)
+    niezalezny = max(0, dv.loc[b]["start"] - dv.loc[a]["koniec"] - row["tn"] + row["skrocenie"])
+    print(row['czynność'], ", całkowity: ", calkowity, ", swobodny: ", swobodny, ", krytyczny:", niezalezny)
