@@ -1,0 +1,29 @@
+\documentclass[tikz]{standalone}
+\usepackage{pgfplotstable} % For handling data files
+\pgfplotsset{compat=1.18} % Use the latest compatibility mode
+
+\begin{document}
+\begin{tikzpicture}
+	% Load data from file
+	\pgfplotstableread[col sep=comma]{data.csv}\loadeddata
+
+	% Loop through the data to plot lines
+	\foreach \i in {0,...,\pgfplotstablelengthof{\loadeddata}-1} {
+			% Extract values from the file
+			\pgfplotstablegetelem{\i}{[index]0}\of\loadeddata
+			\edef\xA{\pgfplotsretval} % x1
+			\pgfplotstablegetelem{\i}{[index]1}\of\loadeddata
+			\edef\yA{\pgfplotsretval} % y1
+			\pgfplotstablegetelem{\i}{[index]2}\of\loadeddata
+			\edef\xB{\pgfplotsretval} % x2
+			\pgfplotstablegetelem{\i}{[index]3}\of\loadeddata
+			\edef\yB{\pgfplotsretval} % y2
+			\pgfplotstablegetelem{\i}{[index]4}\of\loadeddata
+			\edef\weight{\pgfplotsretval} % weight (line width)
+
+			% Draw the line
+			\draw[line width=\weight pt] (\xA,\yA) -- (\xB,\yB);
+		}
+\end{tikzpicture}
+\end{document}
+
