@@ -31,10 +31,10 @@ const int MX_IT = 1000;
 
 double A = 1;
 double B = 5;
-double Evaporation_rate = 0.5;
+double Evaporation_rate = 0.85;
 double Q = 100;
 double C = 1;
-int iteration_stagnation = 100;
+int iteration_stagnation = 1000;
 
 std::random_device rd;
 std::mt19937_64 gen(rd());

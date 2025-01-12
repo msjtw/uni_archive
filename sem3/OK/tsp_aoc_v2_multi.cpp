@@ -64,15 +64,12 @@ const int MX = 100;
 const int MX_IT = 1e6;
 
 double A = 1;
-double B = 2;
-double Evaporation_rate = 0.98;
+double B = 5;
+double Evaporation_rate = 0.85;
+double Q = 100;
+double C = 1;
 int iteration_stagnation = 10000;
-double t_max = 10;
-double t_min = 1;
-int update_global = 10000;
 int ant_count;
-double p_best = 0.05;
-double p_dec;
 
 int n;
 vector<vector<edge>> trails;
@@ -84,7 +81,6 @@ int best_iter = 0;
 
 double point_distance(int, int);
 int next_vertex(ant, std::mt19937_64);
-void trail_reinitialize();
 int initsem(key_t, int, int);
 
 int main(){
@@ -94,8 +90,8 @@ int main(){
     int shmid;
     ant *ret_queue;
     int mode;
-	keyE = ftok("/home/msjtw/Documents/uni/sem3/OK/mmas_multi.cpp", 'E');
-	keyF = ftok("/home/msjtw/Documents/uni/sem3/OK/mmas_multi.cpp", 'F');
+	keyE = ftok("/home/msjtw/Documents/uni/sem3/OK/tsp_aoc_v2_multi.cpp", 'E');
+	keyF = ftok("/home/msjtw/Documents/uni/sem3/OK/tsp_aoc_v2_multi.cpp", 'F');
     shmid = shmget(keyE, sizeof(ant)*51, 0644 | IPC_CREAT);
     ret_queue = (ant *)shmat(shmid, (void *)0 , 0);
 
@@ -110,6 +106,7 @@ int main(){
         perror("initsem process");
         exit(1);
     }
+
 	// read data
 	cin >> n;
 	for(int i = 0; i < n; i++){
@@ -118,9 +115,7 @@ int main(){
 		cin >> idx >> a >> b;
 		points.push_back({a, b, idx});
 	}
-	ant_count = min(50,n/5);
-	p_dec = pow(p_best, 1/n);
-	cout << ant_count << endl;
+	ant_count = n;
 
 	// initalaize trails
 	trails.resize(n);
@@ -129,20 +124,19 @@ int main(){
 		for(int k = 0; k < n; k++){
 			trails[i][k].length = point_distance(i, k);
 			trails[i][k].inv_length = 1/trails[i][k].length;
-			trails[i][k].feromones = t_max;
+			trails[i][k].feromones = C;
 		}
 	}
-
+	
 	// iterations
-	int cat_iteration = 0;
-	for(int iteration = 0; iteration < MX_IT; iteration++, cat_iteration++){
+	for(int iteration = 0; iteration < MX_IT; iteration++){
 		if(iteration - best_iter > iteration_stagnation){
 			cout << "No new resaults for " << iteration_stagnation << " iterations. Exiting..." << endl;
 			break;
 		}
 		auto now = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> elapsed = now - start;
-		if(elapsed.count() >= 60 * 3){
+		if(elapsed.count() >= 30.0){
 			cout << "Timer" << endl;
 			break;
 		}
@@ -163,7 +157,7 @@ int main(){
 				// cout << ant_n << " ";
 				ant curr_ant;
 
-				int start = probability(gen)*n;
+				int start = ant_n;
 				curr_ant.current_vert = start;
 				curr_ant.visited[start] = true;
 				curr_ant.path[curr_ant.path_size] = start;
@@ -206,26 +200,13 @@ int main(){
 			wait_for--;
 		}
 
-
 		//process resaults
 		//evaporate trails
-		double feromone_sum = 0;
 		for(int i = 0; i < n; i++){
 			for(int k = 0; k < n; k++){
-				trails[i][k].feromones = min(trails[i][k].feromones, t_max);
 				trails[i][k].feromones *= Evaporation_rate;
-				trails[i][k].feromones = max(trails[i][k].feromones, t_min);
-				feromone_sum += trails[i][k].feromones;
 			}
 		}
-
-		// cout << "-----" << endl;
-		// cout << ret_queue[0].length << endl;
-		// cout << ret_queue[1].length << endl;
-		// cout << ret_queue[2].length << endl;
-
-		double iteration_best_length = numeric_limits<double>::infinity();
-		vector<int> iteration_best_path;
 		for(int ant_nn = 0; ant_nn < ant_count; ant_nn++){
 			ant curr_ant = ret_queue[ant_nn];
 
@@ -233,59 +214,18 @@ int main(){
 			for(int i = 0; i < curr_ant.path_size; i++){
 				curr_path.push_back(curr_ant.path[i]);
 			}
+
 			//check if new best
 			if(curr_ant.length < best_length){
 				best_length = curr_ant.length;
 				best_path = curr_path;
 				cout << "it: " << iteration << ", best: " << best_length << endl;
 			}
-			//check if iteration best
-			if(curr_ant.length < iteration_best_length){
-				iteration_best_length = curr_ant.length;
-				iteration_best_path = curr_path;
+			//add new feromones
+			for(int i = 0; i < n; i++){
+				trails[curr_ant.path[i]][curr_ant.path[i+1]].feromones += Q/curr_ant.length;
 			}
 		}
-	
-		/* cout << iteration; */
-		//add feromones
-		if(iteration % update_global != 0){
-			/* cout << " local" << endl; */
-			for(int i = 0; i < n-1; i++){
-				trails[iteration_best_path[i]][iteration_best_path[i+1]].feromones += 1/iteration_best_length;
-				trails[iteration_best_path[i+1]][iteration_best_path[i]].feromones += 1/iteration_best_length;
-				trails[iteration_best_path[i]][iteration_best_path[i+1]].feromones = min(trails[iteration_best_path[i]][iteration_best_path[i+1]].feromones, t_max);
-				trails[iteration_best_path[i+1]][iteration_best_path[i]].feromones = min(trails[iteration_best_path[i+1]][iteration_best_path[i]].feromones, t_max);
-			}
-		}
-		else{
-			/* cout << " global" << endl; */
-			for(int i = 0; i < n-1; i++){
-				trails[best_path[i]][best_path[i+1]].feromones += 1/best_length;
-				trails[best_path[i+1]][best_path[i]].feromones += 1/best_length;
-				trails[best_path[i]][best_path[i+1]].feromones = max(trails[best_path[i]][best_path[i+1]].feromones, t_min);
-				trails[best_path[i+1]][best_path[i]].feromones = max(trails[best_path[i+1]][best_path[i]].feromones, t_min);
-			}
-		}
-
-		//change global update frequency
-		if(cat_iteration > 50){
-			update_global = 5;
-		}
-		if(cat_iteration > 150){
-			update_global = 3;
-		}
-		if(cat_iteration > 250){
-			update_global = 2;
-		}
-		if(cat_iteration > 500){
-			update_global = 1;
-		}
-
-		//update trail limits
-		t_max = (1/(1.0-Evaporation_rate))*(1/best_length);
-		double avg = n/2.0;
-		t_min = min(t_max, (t_max*(1-p_dec))/((avg-1)*p_dec));
-		/* cout << t_max << " " << t_min << endl; */
 	}
 
 	cout << best_length << endl;
@@ -327,14 +267,6 @@ int next_vertex(ant c_ant, std::mt19937_64 gen){
 	}
 	
 	return -1;
-}
-
-void trail_reinitialize(){
-	for(int i = 0; i < n; i++){
-		for(int k = 0; k < n; k++){
-			trails[i][k].feromones = t_max;
-		}
-	}
 }
 
 int initsem(key_t key, int nsems, int processes)  /* key from ftok() */
