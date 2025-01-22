@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,7 +31,7 @@ uint get_key(char *);
 int get_queue(int);
 int get_mem(int, int);
 int get_sem(int);
-void courier(int, int, int, int *);
+void kurier(int, int, int, int *);
 void read_conf(char *, char *, int *, int *, int *, int *, int *, int *);
 
 int main(int argc, char **argv){
@@ -40,7 +41,7 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    char mag_name[20];
+    char mag_name[50];
     memset(mag_name, '\0', 20);
     int amount_a = 0, amount_b = 0, amount_c = 0;
     int price_a = 0, price_b = 0, price_c = 0;
@@ -48,7 +49,6 @@ int main(int argc, char **argv){
 
     char *path = argv[1];
     read_conf(path, mag_name, &amount_a, &amount_b, &amount_c, &price_a, &price_b, &price_c);
-    printf("%d %d %d %d %d %d ", amount_a, amount_b, amount_c, price_a, price_b, price_c);
 
     char *key_string = argv[2];
     uint key = get_key(key_string);
@@ -72,19 +72,19 @@ int main(int argc, char **argv){
     int res_semid = get_sem(res_key);
 
     for(int i = 0; i < 3; i++){
-        courier(i, reqqid, res_semid, resources);
+        kurier(i, reqqid, res_semid, resources);
     }
 
-    int courier_left = 3;
-    while(courier_left > 0){
+    int kurier_left = 3;
+    while(kurier_left > 0){
         struct sembuf sb1 = {.sem_num = 1, .sem_op = -1, .sem_flg = 0};
         struct sembuf sb2 = {.sem_num = 2, .sem_op = 1, .sem_flg = 0};
 
         semop(res_semid, &sb1, 1);
 
         if(resources[0] == -1){
-            courier_left--;
-            printf("Pozostało %d kurierów.\n", courier_left);
+            kurier_left--;
+            printf("Pozostało %d kurierów.\n", kurier_left);
         }
         else if(resources[0] <= amount_a && resources[1] <= amount_b && resources[2] <= amount_c){
             amount_a -= resources[0];
@@ -100,7 +100,7 @@ int main(int argc, char **argv){
         }
         else{
             resources[3] = -1;
-            printf("Kurier obługa... failed.\n");
+            printf("Kurier obługa... brak zasobów.\n");
         }
 
         semop(res_semid, &sb2, 1);
@@ -110,7 +110,7 @@ int main(int argc, char **argv){
     msgsnd(reqqid, &buff, sizeof(int), 0);
     printf("Magazyn został zamknięty.\n");
     printf("Pozostało %d %d %d.\n", amount_a, amount_b, amount_c);
-    printf("Sprzedano zasobów za %d złota.\n", total_gold);
+    printf("Wysłano zasobów za %d złota.\n", total_gold);
 
     semctl(res_semid, 0, IPC_RMID);
     shmctl(res_shmid, IPC_RMID, NULL);
@@ -121,7 +121,7 @@ int main(int argc, char **argv){
 uint get_key(char *pattern){
     int MOD = 1e9+9;
     int P = 9973;
-    int MX = 1e6+7;
+    int MX = 1e9+7;
 
     uint key = 0;
     int n = strlen(pattern);
@@ -171,8 +171,17 @@ void read_conf(char *path, char *name, int *aa, int *ab, int *ac, int *pa, int *
         else if(n == 0){
             name[ni] = buff;
             ni ++;
+            if(ni == 20){
+                fprintf(stderr, "Za długa nazwa magazynu! Max 50 znaków.");
+                exit(1);
+            }
+        }
+        else if(!isdigit(buff)){
+            fprintf(stderr, "Paramater musi być liczbą!");
+            exit(1);
         }
         else if(n == 1){
+            
             *aa *= 10;
             *aa += buff - '0';
         }
@@ -199,12 +208,12 @@ void read_conf(char *path, char *name, int *aa, int *ab, int *ac, int *pa, int *
     }
 }
 
-void courier(int id,int msq_id, int sem_id, int *resources){
+void kurier(int id,int msq_id, int sem_id, int *resources){
     if(!fork()){
         time_t last_req = time(NULL);
         int end = 0;
         while(1){
-            if(time(NULL) - last_req > 5){
+            if(time(NULL) - last_req > 15){
                 printf("\tKurier %d, brak zmównień.\n", id);
                 break;
             }
@@ -213,8 +222,6 @@ void courier(int id,int msq_id, int sem_id, int *resources){
             if((rv = msgrcv(msq_id, &r_buff, sizeof(struct req), 1, IPC_NOWAIT)) != -1){
                 last_req = time(NULL);
 
-                printf("\tKurier %d pobrał zamówienie.\n", id);
-
                 struct sembuf sb0 = {.sem_num = 0, .sem_op = -1, .sem_flg = 0};
                 semop(sem_id, &sb0, 1);
                     
@@ -222,10 +229,11 @@ void courier(int id,int msq_id, int sem_id, int *resources){
                     resources[1] = r_buff.data.b;
                     resources[2] = r_buff.data.c;
 
+                    printf("\tkurier %d pobrał zamówienie na %d %d %d\n", id, resources[0], resources[1], resources[2]);
+
                     struct sembuf sb1 = {.sem_num = 1, .sem_op = 1, .sem_flg = 0};
                     struct sembuf sb2 = {.sem_num = 2, .sem_op = -1, .sem_flg = 0};
                     semop(sem_id, &sb1, 1);
-                    printf("\tkurier %d przekazane do mag %d %d %d\n", id, resources[0], resources[1], resources[2]);
                     semop(sem_id, &sb2, 1);
 
                     if(resources[3] == -1){

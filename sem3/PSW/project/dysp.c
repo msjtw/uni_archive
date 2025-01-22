@@ -30,7 +30,7 @@ int get_queue(int);
 
 int main(int argc, char **argv){
     if(argc != 6){
-        fprintf(stderr, "Zła liczba argumentów.\n");
+        fprintf(stderr, "Zła liczba argumentów!\n");
         fprintf(stderr, "./dysp <klucz> <n_zamowien> <max_A> <max_B> <max_C>\n");
         exit(1);
     }
@@ -39,10 +39,16 @@ int main(int argc, char **argv){
 
     char *key_string = argv[1];
     uint key = get_key(key_string);
-    int n_zamowien = atoi(argv[2]);
-    int max_A = atoi(argv[3]);
-    int max_B = atoi(argv[4]);
-    int max_C = atoi(argv[5]);
+    int n_zamowien = strtol(argv[2],NULL,10);
+    int max_A = strtol(argv[3],NULL,10);
+    int max_B = strtol(argv[4],NULL,10);
+    int max_C = strtol(argv[5],NULL,10);
+    if(n_zamowien == 0 || max_A == 0 || max_B == 0 || max_C == 0){
+        fprintf(stderr, "Parametry muszą być liczbami większymi od 0!");
+        exit(1);
+    }
+
+    printf("max A: %d, max B: %d, max C: %d\n", max_A, max_B, max_C);
 
     printf("key: %d\n", key);
     int reqqid = get_queue(key);
@@ -62,9 +68,9 @@ int main(int argc, char **argv){
             break;
         }
         usleep(500 * 1000);
-        int get_A = rand() % max_A;
-        int get_B = rand() % max_B;
-        int get_C = rand() % max_C;
+        int get_A = rand() % max_A+1;
+        int get_B = rand() % max_B+1;
+        int get_C = rand() % max_C+1;
 
         send_request(reqqid, get_A, get_B, get_C);
     }
@@ -80,16 +86,20 @@ int main(int argc, char **argv){
     }
 
     int gold = 0;
+    int zrealizowano = 0;
     struct mag_ret_buff mg_buff;
     while(msgrcv(reqqid, &mg_buff, sizeof(int), 2, IPC_NOWAIT) != -1){
         gold += mg_buff.val;
+        zrealizowano++;
     }
     if(errno != ENOMSG && errno != EAGAIN){
         perror("msgrcv");
         exit(1);
     }
 
-    printf("Zapłacono %d złota.", gold);
+    printf("Zapłacono %d złota.\n", gold);
+    printf("Odebrano %d zamówień.\n", zrealizowano);
+
     if(msgctl(reqqid, IPC_RMID, NULL) == -1){
         perror("msgctl IPC_RMID");
         exit(1);
@@ -99,9 +109,9 @@ int main(int argc, char **argv){
 }
 
 uint get_key(char *pattern){
-    const int MOD = 1e9+9;
-    const int P = 9973;
-    const int MX = 1e6+7;
+    int MOD = 1e9+9;
+    int P = 9973;
+    int MX = 1e9+7;
 
     uint key = 0;
     int n = strlen(pattern);
