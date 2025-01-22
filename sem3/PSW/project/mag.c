@@ -206,6 +206,7 @@ void read_conf(char *path, char *name, int *aa, int *ab, int *ac, int *pa, int *
             *pc += buff - '0';
         }
     }
+    close(conf_fd);
 }
 
 void kurier(int id,int msq_id, int sem_id, int *resources){
