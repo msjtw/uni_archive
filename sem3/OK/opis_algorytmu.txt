@@ -1,7 +1,0 @@
-Algorytmy mrówkowe są stosowane przy rozwiązywaniu niektórych problemów NP-trudnych.
-W przeszukiwaniu przestrzeni rozwiązań symulują one zachowanie kolonii mrówek.
-Każde znalezione rozwiązanie pozostawia informacje używane do budowy następnego.
-Dla problemu komiwojażera w każdej iteracji wypuszczana jest pewna ilość mrówek które mają znaleźć rozwiązanie.
-Po znalezieniu ścieżki, na każdej krawędzi z której jest zbudowana, jest dodawana wartość (tzw. feromony) odwrotnie proporcjonalna do długości znalezionego rozwiązania.
-Mrówka tworząc trasę wybiera wierzchołki z prawdopodobieństwem zgodnym z siłą feromonów na krawędzi.
-Po każdej iteracji z krawędzi jest usuwany pewien procent feromonów.
